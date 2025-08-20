@@ -1,0 +1,54 @@
+spring:
+  application:
+    name: pedido-service
+  jpa:
+    open-in-view: false
+
+server:
+  port: 8080
+
+tracking:
+  base-url: http://localhost:8083   # local/dev fuera de docker
+
+auth:
+  base-url: http://localhost:9000
+  client-id: pedido-service
+  client-secret: pedido-secret
+
+---
+spring:
+  config:
+    activate:
+      on-profile: docker
+  datasource:
+    url: jdbc:mysql://pedidos-db:3306/pedidosdb?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+    username: root
+    password: root
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        format_sql: true
+        jdbc:
+          lob:
+            non_contextual_creation: true
+
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+    locations: classpath:/db/migration
+    encoding: UTF-8
+
+tracking:
+  base-url: http://tracking-service:8080
+
+auth:
+  base-url: http://auth-service:9000
+  client-id: pedido-service
+  client-secret: pedido-secret
+
+logging:
+  level:
+    org.hibernate.SQL: warn
+    org.flywaydb: info

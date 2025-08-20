@@ -1,0 +1,66 @@
+# === Archivos y carpetas de sistema ===
+.DS_Store
+Thumbs.db
+
+# === Configuración de IDEs ===
+.vscode/
+.idea/
+*.iml
+*.swp
+
+# === Node.js / Angular ===
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+dist/
+build/
+.tmp/
+
+# === Java / Spring Boot ===
+target/
+out/
+*.class
+*.jar
+*.war
+*.ear
+
+# === Logs y temporales ===
+*.log
+*.pid
+*.seed
+*.pid.lock
+*.tmp
+
+# === Entornos virtuales Python (si usas) ===
+.venv/
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# === Docker ===
+/docker-compose.override.yml
+/.docker/
+*.env
+
+# === Cobertura y testing ===
+coverage/
+.nyc_output/
+.junit/
+.test/
+.jest/
+
+# === SonarQube ===
+.sonar/
+.scannerwork/
+
+# === Archivos de sistema operativo ===
+ehthumbs.db
+Desktop.ini
+
+# === Archivos de bases de datos locales ===
+*.db
+*.sqlite
+*.sql

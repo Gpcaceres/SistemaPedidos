@@ -1,0 +1,5 @@
+<!-- Agregar al <dependencies> de tracking-service -->
+<dependency>
+  <groupId>org.springframework.boot</groupId>
+  <artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
+</dependency>

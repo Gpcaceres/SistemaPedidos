@@ -1,0 +1,35 @@
+services:
+  clientes-db:
+    image: postgres:16
+    container_name: clientes-db
+    environment:
+      POSTGRES_DB: clientesdb
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5433:5432"   # evita conflicto con Postgres local
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d clientesdb"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks:
+      - appnet
+
+  cliente-service:
+    build: .
+    container_name: cliente-service
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+    depends_on:
+      clientes-db:
+        condition: service_healthy
+    ports:
+      - "8081:8080"
+    networks:
+      - appnet
+
+networks:
+  appnet:
+    name: appnet
+    external: true

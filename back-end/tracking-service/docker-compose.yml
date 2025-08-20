@@ -1,0 +1,33 @@
+services:
+  tracking-redis:
+    image: redis:7.2-alpine
+    container_name: tracking-redis
+    ports:
+      - "6380:6379"
+    command: ["redis-server","--appendonly","yes"]
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli ping | grep PONG"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks:
+      - appnet
+
+  tracking-service:
+    build: .
+    container_name: tracking-service
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      AUTH_ISSUER_URI: http://auth-service:9000   # <- aquí el cambio
+    depends_on:
+      tracking-redis:
+        condition: service_healthy
+    ports:
+      - "8083:8080"
+    networks:
+      - appnet
+
+networks:
+  appnet:
+    name: appnet
+    external: true

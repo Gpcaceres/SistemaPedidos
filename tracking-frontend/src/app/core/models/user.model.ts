@@ -1,0 +1,1 @@
+export interface UserProfile { username: string; roles: string[]; exp?: number; }

@@ -1,0 +1,6 @@
+# En servicio tracking-service agregar:
+environment:
+  SPRING_PROFILES_ACTIVE: docker
+  AUTH_ISSUER_URI: http://host.docker.internal:9000
+extra_hosts:
+  - "host.docker.internal:host-gateway"

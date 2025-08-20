@@ -1,0 +1,33 @@
+spring:
+  application:
+    name: cliente-service
+server:
+  port: 8080
+
+---
+spring:
+  config:
+    activate:
+      on-profile: docker
+  datasource:
+    url: jdbc:postgresql://clientes-db:5432/clientesdb
+    username: postgres
+    password: postgres
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        format_sql: true
+        jdbc.lob.non_contextual_creation: true
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+    locations: classpath:/db/migration
+    encoding: UTF-8
+
+logging:
+  level:
+    org.hibernate.SQL: warn
+    org.flywaydb: info

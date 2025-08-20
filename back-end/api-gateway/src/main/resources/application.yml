@@ -1,0 +1,39 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      default-filters:
+        - DedupeResponseHeader=Access-Control-Allow-Credentials Access-Control-Allow-Origin
+      routes:
+        - id: clientes
+          uri: http://cliente-service:8080
+          predicates:
+            - Path=/api/clientes/**
+        - id: pedidos
+          uri: http://pedido-service:8080
+          predicates:
+            - Path=/api/pedidos/**
+        - id: tracking-public
+          uri: http://tracking-service:8080
+          predicates:
+            - Path=/api/tracking/**
+        - id: tracking-internal
+          uri: http://tracking-service:8080
+          predicates:
+            - Path=/internal/**
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://auth-service:9000
+          jwk-set-uri: http://auth-service:9000/oauth2/jwks
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info

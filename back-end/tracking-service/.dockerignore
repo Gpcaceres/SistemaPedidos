@@ -1,0 +1,16 @@
+target/
+build/
+out/
+bin/
+*.log
+logs/
+.git/
+.gitignore
+.idea/
+*.iml
+.vscode/
+.DS_Store
+Thumbs.db
+.mvn/
+.mvn/wrapper/maven-wrapper.jar
+.env

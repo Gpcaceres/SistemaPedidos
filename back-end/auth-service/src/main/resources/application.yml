@@ -1,0 +1,24 @@
+server:
+  port: 9000
+
+spring:
+  application:
+    name: auth-service
+
+# Modo local (fuera de Docker): el issuer será http://localhost:9000
+app:
+  issuer: ${AUTH_ISSUER_URI:http://localhost:9000}
+
+logging:
+  level:
+    org.springframework.security: info
+
+---
+# Modo Docker: el issuer será http://auth-service:9000 (DNS del servicio en la red docker)
+spring:
+  config:
+    activate:
+      on-profile: docker
+
+app:
+  issuer: ${AUTH_ISSUER_URI:http://auth-service:9000}

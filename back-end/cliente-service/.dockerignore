@@ -1,0 +1,48 @@
+# ---- Build outputs ----
+target/
+build/
+out/
+bin/
+
+# ---- Logs & runtime files ----
+*.log
+logs/
+*.pid
+
+# ---- VCS ----
+.git/
+.gitignore
+
+# ---- IDE/editor ----
+.idea/
+*.iml
+.vscode/
+.project
+.classpath
+.settings/
+*.ipr
+*.iws
+
+# ---- OS cruft ----
+.DS_Store
+Thumbs.db
+
+# ---- Maven ----
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+.mvn/
+.mvn/wrapper/maven-wrapper.jar
+
+# ---- Env files ----
+.env
+*.env
+
+# ---- Node (por si se mezcla front) ----
+node_modules/
+npm-debug.log*
+yarn-error.log*
+pnpm-debug.log*

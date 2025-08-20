@@ -1,0 +1,21 @@
+services:
+  auth-service:
+    build: .
+    container_name: auth-service
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      AUTH_ISSUER_URI: http://auth-service:9000   # <- issuer interno para todos los RS
+    ports:
+      - "9000:9000"
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:9000/actuator/health"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks:
+      - appnet
+
+networks:
+  appnet:
+    name: appnet
+    external: true

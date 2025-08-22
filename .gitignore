@@ -8,7 +8,7 @@ Thumbs.db
 *.iml
 *.swp
 
-# === Node.js / Angular ===
+# === Node.js / Angular ====
 node_modules/
 npm-debug.log*
 yarn-debug.log*

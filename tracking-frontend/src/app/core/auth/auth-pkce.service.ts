@@ -30,14 +30,14 @@ export class AuthPkceService {
 
     const params = new URLSearchParams({
       response_type: 'code',
-      client_id: environment.oauth.clientId,
-      redirect_uri: environment.oauth.redirectUri,
+      client_id: environment.auth.clientId,
+      redirect_uri: environment.auth.redirectUri,
       scope: 'openid profile clientes.read pedidos.read pedidos.write',
       code_challenge: challenge,
       code_challenge_method: 'S256',
       state
     });
-    window.location.href = `${environment.oauth.authorizeUrl}?${params.toString()}`;
+    window.location.href = `${environment.endpoints.authAuthorize}?${params.toString()}`;
   }
 
   exchangeCode(code: string, state: string): Observable<any> {
@@ -50,11 +50,11 @@ export class AuthPkceService {
     const body = new HttpParams()
       .set('grant_type', 'authorization_code')
       .set('code', code)
-      .set('redirect_uri', environment.oauth.redirectUri)
-      .set('client_id', environment.oauth.clientId)
+      .set('redirect_uri', environment.auth.redirectUri)
+      .set('client_id', environment.auth.clientId)
       .set('code_verifier', verifier);
 
     const headers = new HttpHeaders({ 'Content-Type': 'application/x-www-form-urlencoded' });
-    return this.http.post(environment.oauth.tokenUrl, body.toString(), { headers });
+    return this.http.post(environment.endpoints.authToken, body.toString(), { headers });
   }
 }

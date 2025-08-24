@@ -1,0 +1,198 @@
+ (cd "$(git rev-parse --show-toplevel)" && git apply --3way <<'EOF' 
+diff --git a/back-end/cliente-service/README.md b/back-end/cliente-service/README.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..978fd7a83dfa3406a9fd2af25a4faea50e809dfb
+--- /dev/null
++++ b/back-end/cliente-service/README.md
+@@ -0,0 +1,21 @@
++# Cliente Service
++
++## Password Recovery
++
++Each client has a recovery token stored in the `tokenRecuperacion` field. The token is automatically generated when a client account is created and returned in the service responses. Clients should store this token securely.
++
++### Resetting the Password
++
++1. Send a request to `POST /api/clientes/recuperar-clave` with the following body:
++   ```json
++   {
++     "email": "usuario@example.com",
++     "token": "<tokenRecuperacion>",
++     "nuevaClave": "nuevaPassword"
++   }
++   ```
++2. The service validates the token before updating the password.
++3. A new recovery token is generated and included in the response.
++
++If the token does not match, the service returns `401 Unauthorized`.
++
+diff --git a/back-end/cliente-service/src/main/java/com/example/cliente_service/clientes/Cliente.java b/back-end/cliente-service/src/main/java/com/example/cliente_service/clientes/Cliente.java
+index 4fd82e154d52a8f5dd46c9c0a6b9e0a7e1a2c68e..90f9bf1391f83be2a8d5011633f62ccbbafecad1 100644
+--- a/back-end/cliente-service/src/main/java/com/example/cliente_service/clientes/Cliente.java
++++ b/back-end/cliente-service/src/main/java/com/example/cliente_service/clientes/Cliente.java
+@@ -20,36 +20,40 @@ public class Cliente {
+   @Id
+   @GeneratedValue       // Genera el UUID automáticamente
+   @UuidGenerator
+   private UUID id;
+ 
+   @NotBlank
+   @Size(max = 120)
+   @Column(nullable = false, length = 120)
+   private String nombre;
+ 
+   @NotBlank
+   @Email
+   @Size(max = 160)
+   @Column(unique = true, nullable = false, length = 160)
+   private String email;
+ 
+   @NotBlank
+   @Size(max = 80)
+   @Column(nullable = false, length = 80)
+   private String clave;
+ 
+   @Size(max = 40)
+   @Column(length = 40)
+   private String telefono;
+ 
++  @Size(max = 120)
++  @Column(name = "token_recuperacion", length = 120)
++  private String tokenRecuperacion;
++
+   @Column(name = "creado_en", nullable = false, columnDefinition = "timestamptz")
+   @Builder.Default
+   private OffsetDateTime creadoEn = OffsetDateTime.now();
+ 
+   @PrePersist
+   void prePersist() {
+     if (creadoEn == null) {
+       creadoEn = OffsetDateTime.now();
+     }
+   }
+ }
+diff --git a/back-end/cliente-service/src/main/java/com/example/cliente_service/clientes/ClienteController.java b/back-end/cliente-service/src/main/java/com/example/cliente_service/clientes/ClienteController.java
+index 86e96dc2ebac33fcbb19da321f88762ee0f214bb..429dcf15e300e84300aa9523a84d38bb534b7ba2 100644
+--- a/back-end/cliente-service/src/main/java/com/example/cliente_service/clientes/ClienteController.java
++++ b/back-end/cliente-service/src/main/java/com/example/cliente_service/clientes/ClienteController.java
+@@ -17,67 +17,72 @@ import java.util.UUID;
+ public class ClienteController {
+   private final ClienteRepository repo;
+   private final PasswordEncoder encoder;
+ 
+   @GetMapping
+   public List<ClienteRes> listar() {
+     return repo.findAll().stream().map(ClienteRes::of).toList();
+   }
+ 
+   @GetMapping("/{id}")
+   public ClienteRes ver(@PathVariable UUID id) {
+     return repo
+         .findById(id)
+         .map(ClienteRes::of)
+         .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+   }
+ 
+   @PostMapping
+   @ResponseStatus(HttpStatus.CREATED)
+   public ClienteRes crear(@Valid @RequestBody ClienteReq req) {
+     var c = Cliente.builder()
+         .nombre(req.nombre())
+         .email(req.email())
+         .telefono(req.telefono())
+         .clave(encoder.encode(req.clave()))
++        .tokenRecuperacion(UUID.randomUUID().toString())
+         .build();
+     return ClienteRes.of(repo.save(c));
+   }
+ 
+   @PutMapping("/{id}")
+   public ClienteRes actualizar(@PathVariable UUID id, @Valid @RequestBody ClienteReq req) {
+     var c =
+         repo
+             .findById(id)
+             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+     c.setNombre(req.nombre());
+     c.setEmail(req.email());
+     c.setTelefono(req.telefono());
+     c.setClave(encoder.encode(req.clave()));
+     return ClienteRes.of(repo.save(c));
+   }
+ 
+   @DeleteMapping("/{id}")
+   @ResponseStatus(HttpStatus.NO_CONTENT)
+   public void eliminar(@PathVariable UUID id) {
+     if (!repo.existsById(id)) {
+       throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+     }
+     repo.deleteById(id);
+   }
+ 
+   @PostMapping("/login")
+   public ClienteRes login(@Valid @RequestBody LoginReq req) {
+     var c = repo.findByEmail(req.email()).orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED));
+     if (!encoder.matches(req.clave(), c.getClave())) {
+       throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+     }
+     return ClienteRes.of(c);
+   }
+ 
+   @PostMapping("/recuperar-clave")
+   public ClienteRes recuperarClave(@Valid @RequestBody RecuperarClaveReq req) {
+     var c = repo.findByEmail(req.email()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
++    if (!req.token().equals(c.getTokenRecuperacion())) {
++      throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
++    }
+     c.setClave(encoder.encode(req.nuevaClave()));
++    c.setTokenRecuperacion(UUID.randomUUID().toString());
+     return ClienteRes.of(repo.save(c));
+   }
+ }
+diff --git a/back-end/cliente-service/src/main/java/com/example/cliente_service/clientes/dto/ClienteRes.java b/back-end/cliente-service/src/main/java/com/example/cliente_service/clientes/dto/ClienteRes.java
+index 9828ae415435c488a1ef5c46134d665c67d4644e..81ede7b315de3de3b02bb447f923a29ea6ceaf39 100644
+--- a/back-end/cliente-service/src/main/java/com/example/cliente_service/clientes/dto/ClienteRes.java
++++ b/back-end/cliente-service/src/main/java/com/example/cliente_service/clientes/dto/ClienteRes.java
+@@ -1,9 +1,21 @@
+ package com.example.cliente_service.clientes.dto;
+ import com.example.cliente_service.clientes.Cliente;
+ import java.util.UUID;
+ 
+-public record ClienteRes(UUID id, String nombre, String email, String telefono, String clave) {
++public record ClienteRes(
++    UUID id,
++    String nombre,
++    String email,
++    String telefono,
++    String clave,
++    String tokenRecuperacion) {
+   public static ClienteRes of(Cliente c) {
+-    return new ClienteRes(c.getId(), c.getNombre(), c.getEmail(), c.getTelefono(), c.getClave());
++    return new ClienteRes(
++        c.getId(),
++        c.getNombre(),
++        c.getEmail(),
++        c.getTelefono(),
++        c.getClave(),
++        c.getTokenRecuperacion());
+   }
+ }
+diff --git a/back-end/cliente-service/src/main/java/com/example/cliente_service/clientes/dto/RecuperarClaveReq.java b/back-end/cliente-service/src/main/java/com/example/cliente_service/clientes/dto/RecuperarClaveReq.java
+index 6e5a6f52dfb68dc66c6792e003c3f6b219ad20a8..e9b75b76f0fd4e4367013a2284e6e7e8409d4eff 100644
+--- a/back-end/cliente-service/src/main/java/com/example/cliente_service/clientes/dto/RecuperarClaveReq.java
++++ b/back-end/cliente-service/src/main/java/com/example/cliente_service/clientes/dto/RecuperarClaveReq.java
+@@ -1,11 +1,12 @@
+ package com.example.cliente_service.clientes.dto;
+ 
+ import jakarta.validation.constraints.Email;
+ import jakarta.validation.constraints.NotBlank;
+ import jakarta.validation.constraints.Size;
+ 
+ public record RecuperarClaveReq(
+     @NotBlank @Email @Size(max = 160) String email,
++    @NotBlank @Size(max = 120) String token,
+     @NotBlank @Size(max = 80) String nuevaClave
+ ) {}
+ 
+ 
+EOF
+)

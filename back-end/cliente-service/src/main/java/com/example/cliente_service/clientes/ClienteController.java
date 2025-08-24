@@ -34,6 +34,22 @@ public class ClienteController {
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
   public ClienteRes crear(@Valid @RequestBody ClienteReq req) {
+<<<<<<< ours
+    repo
+        .findByEmail(req.email())
+        .ifPresent(
+            c -> {
+              throw new ResponseStatusException(
+                  HttpStatus.CONFLICT, "El email ya está en uso");
+            });
+    var c =
+        Cliente.builder()
+            .nombre(req.nombre())
+            .email(req.email())
+            .telefono(req.telefono())
+            .clave(encoder.encode(req.clave()))
+            .build();
+=======
     var c = Cliente.builder()
         .nombre(req.nombre())
         .email(req.email())
@@ -41,6 +57,7 @@ public class ClienteController {
         .clave(encoder.encode(req.clave()))
         .tokenRecuperacion(UUID.randomUUID().toString())
         .build();
+>>>>>>> theirs
     return ClienteRes.of(repo.save(c));
   }
 
@@ -50,6 +67,14 @@ public class ClienteController {
         repo
             .findById(id)
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+    repo
+        .findByEmail(req.email())
+        .filter(existing -> !existing.getId().equals(id))
+        .ifPresent(
+            existing -> {
+              throw new ResponseStatusException(
+                  HttpStatus.CONFLICT, "El email ya está en uso");
+            });
     c.setNombre(req.nombre());
     c.setEmail(req.email());
     c.setTelefono(req.telefono());

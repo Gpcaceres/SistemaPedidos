@@ -6,6 +6,7 @@ import com.example.pedido_service.tracking.TrackingPayload;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import jakarta.validation.Valid;
 import java.util.List;
@@ -26,7 +27,9 @@ public class PedidoController {
 
   @GetMapping("/{id}")
   public PedidoRes ver(@PathVariable UUID id) {
-    return repo.findById(id).map(PedidoRes::of).orElseThrow();
+    return repo.findById(id)
+        .map(PedidoRes::of)
+        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
   }
 
   @GetMapping("/cliente/{clienteId}")
@@ -54,7 +57,8 @@ public class PedidoController {
 
   @PutMapping("/{id}")
   public PedidoRes actualizar(@PathVariable UUID id, @Valid @RequestBody PedidoUpdateReq req) {
-    var p = repo.findById(id).orElseThrow();
+    var p = repo.findById(id)
+        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     if (req.getTotal() != null) p.setTotal(req.getTotal());
     if (req.getEstado() != null) p.setEstado(req.getEstado());
     var updated = repo.save(p);
@@ -70,6 +74,9 @@ public class PedidoController {
   @DeleteMapping("/{id}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
   public void eliminar(@PathVariable UUID id) {
+    if (!repo.existsById(id)) {
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+    }
     repo.deleteById(id);
   }
 }

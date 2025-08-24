@@ -1,6 +1,8 @@
 # === Archivos y carpetas de sistema ===
 .DS_Store
 Thumbs.db
+ehthumbs.db
+Desktop.ini
 
 # === Configuración de IDEs ===
 .vscode/
@@ -16,6 +18,12 @@ yarn-error.log*
 dist/
 build/
 .tmp/
+.angular/           # cache de Angular CLI
+.angular/cache/     # (por si ya está creada)
+# si tu frontend vive en subcarpeta:
+frontend/.angular/
+frontend/dist/
+frontend/node_modules/
 
 # === Java / Spring Boot ===
 target/
@@ -55,10 +63,6 @@ coverage/
 # === SonarQube ===
 .sonar/
 .scannerwork/
-
-# === Archivos de sistema operativo ===
-ehthumbs.db
-Desktop.ini
 
 # === Archivos de bases de datos locales ===
 *.db

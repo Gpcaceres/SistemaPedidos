@@ -16,7 +16,6 @@ export class AuthService {
   private refreshKey = 'refresh_token';
   private verifierKey = 'pkce_code_verifier';
   private api = 'http://localhost:8080'; // gateway
-  private authApi = 'http://localhost:9000/auth';
   private redirectUri = 'http://localhost:4200/callback';
 
   constructor(private http: HttpClient, private router: Router) {}
@@ -70,10 +69,6 @@ export class AuthService {
     localStorage.removeItem(this.tokenKey);
     localStorage.removeItem(this.refreshKey);
     this.router.navigate(['/login']);
-  }
-
-  register(username: string, password: string) {
-    return this.http.post(`${this.authApi}/register`, { username, password });
   }
 
   getToken(): string | null {

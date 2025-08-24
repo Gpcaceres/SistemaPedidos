@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.*;
 import org.hibernate.annotations.UuidGenerator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.time.OffsetDateTime;
 import java.util.UUID;
@@ -33,9 +34,19 @@ public class Cliente {
   @Column(unique = true, nullable = false, length = 160)
   private String email;
 
+  @NotBlank
+  @Size(max = 80)
+  @Column(nullable = false, length = 80)
+  @JsonIgnore
+  private String clave;
+
   @Size(max = 40)
   @Column(length = 40)
   private String telefono;
+
+  @Size(max = 120)
+  @Column(name = "token_recuperacion", length = 120)
+  private String tokenRecuperacion;
 
   @Column(name = "creado_en", nullable = false, columnDefinition = "timestamptz")
   @Builder.Default

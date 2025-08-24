@@ -2,6 +2,7 @@ package com.example.auth_service.controller;
 
 import com.example.auth_service.dto.LoginRequest;
 import com.example.auth_service.dto.RegisterRequest;
+import com.example.auth_service.dto.AuthResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -31,23 +32,23 @@ public class AuthController {
   }
 
   @PostMapping("/register")
-  public ResponseEntity<String> register(@RequestBody RegisterRequest request) {
+  public ResponseEntity<AuthResponse> register(@RequestBody RegisterRequest request) {
     if (userDetailsManager.userExists(request.username())) {
-      return ResponseEntity.badRequest().body("User already exists");
+      return ResponseEntity.badRequest().body(new AuthResponse("User already exists"));
     }
     UserDetails user = User.withUsername(request.username())
         .password(passwordEncoder.encode(request.password()))
         .roles(request.role().toUpperCase())
         .build();
     userDetailsManager.createUser(user);
-    return ResponseEntity.ok("User registered");
+    return ResponseEntity.ok(new AuthResponse("User registered"));
   }
 
   @PostMapping("/login")
-  public ResponseEntity<String> login(@RequestBody LoginRequest request) {
+  public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest request) {
     UsernamePasswordAuthenticationToken token =
         new UsernamePasswordAuthenticationToken(request.username(), request.password());
     authenticationManager.authenticate(token);
-    return ResponseEntity.ok("Login successful");
+    return ResponseEntity.ok(new AuthResponse("Login successful"));
   }
 }

@@ -5,5 +5,6 @@ import java.util.UUID;
 public record ClienteRes(UUID id, String nombre, String email, String telefono) {
   public static ClienteRes of(Cliente c) {
     return new ClienteRes(c.getId(), c.getNombre(), c.getEmail(), c.getTelefono());
+
   }
 }

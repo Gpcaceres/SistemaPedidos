@@ -42,6 +42,10 @@ public class Cliente {
   @Column(length = 40)
   private String telefono;
 
+  @Size(max = 120)
+  @Column(name = "token_recuperacion", length = 120)
+  private String tokenRecuperacion;
+
   @Column(name = "creado_en", nullable = false, columnDefinition = "timestamptz")
   @Builder.Default
   private OffsetDateTime creadoEn = OffsetDateTime.now();

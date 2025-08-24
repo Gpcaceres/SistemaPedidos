@@ -1,34 +1,38 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { tap } from 'rxjs/operators';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private tokenKey = 'auth_token';
+  private refreshKey = 'refresh_token';
   private api = 'http://localhost:8080'; // gateway
+  private authApi = 'http://localhost:9000/auth';
 
   constructor(private http: HttpClient, private router: Router) {}
 
   login(username: string, password: string) {
-    const body = new URLSearchParams();
-    body.set('grant_type', 'password');
-    body.set('username', username);
-    body.set('password', password);
-
-    const headers = new HttpHeaders({
-      'Content-Type': 'application/x-www-form-urlencoded',
-      Authorization: 'Basic ' + btoa('front-client:')
-    });
-
     return this.http
-      .post<any>(`${this.api}/oauth2/token`, body.toString(), { headers })
-      .pipe(tap(res => localStorage.setItem(this.tokenKey, res.access_token)));
+      .post<any>(`${this.authApi}/login`, { username, password })
+      .pipe(
+        tap(res => {
+          localStorage.setItem(this.tokenKey, res.accessToken);
+          if (res.refreshToken) {
+            localStorage.setItem(this.refreshKey, res.refreshToken);
+          }
+        })
+      );
   }
 
   logout() {
     localStorage.removeItem(this.tokenKey);
+    localStorage.removeItem(this.refreshKey);
     this.router.navigate(['/login']);
+  }
+
+  register(username: string, password: string) {
+    return this.http.post(`${this.authApi}/register`, { username, password });
   }
 
   getToken(): string | null {

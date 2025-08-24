@@ -30,6 +30,8 @@ import org.springframework.security.oauth2.server.authorization.settings.ClientS
 import org.springframework.security.oauth2.server.authorization.settings.TokenSettings;
 import org.springframework.security.oauth2.server.authorization.token.JwtEncodingContext;
 import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenCustomizer;
+import org.springframework.security.oauth2.jwt.JwtEncoder;
+import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -65,7 +67,7 @@ public class SecurityConfig {
       .authorizeHttpRequests(auth -> auth
         .requestMatchers("/actuator/**", "/auth/register", "/auth/login").permitAll()
         .anyRequest().authenticated())
-      .formLogin(Customizer.withDefaults());
+      .formLogin(AbstractHttpConfigurer::disable);
     return http.build();
   }
 
@@ -169,6 +171,11 @@ public class SecurityConfig {
     RSAKey rsaKey = Jwks.generateRsa();
     JWKSet jwkSet = new JWKSet(rsaKey);
     return (jwkSelector, securityContext) -> jwkSelector.select(jwkSet);
+  }
+
+  @Bean
+  JwtEncoder jwtEncoder(JWKSource<SecurityContext> jwkSource) {
+    return new NimbusJwtEncoder(jwkSource);
   }
 
   // --- Issuer ---

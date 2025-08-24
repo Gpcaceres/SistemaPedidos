@@ -1,0 +1,1 @@
+ALTER TABLE clientes ADD COLUMN IF NOT EXISTS token_recuperacion VARCHAR(120);

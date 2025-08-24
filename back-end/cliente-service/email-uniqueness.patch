@@ -1,0 +1,230 @@
+ (cd "$(git rev-parse --show-toplevel)" && git apply --3way <<'EOF' 
+diff --git a/back-end/cliente-service/pom.xml b/back-end/cliente-service/pom.xml
+index 2abe7896a6356e0baccd45402fab981d3f277118..b55bc8bb04d6d20be4f36cc6a7d6625350f6d9f5 100644
+--- a/back-end/cliente-service/pom.xml
++++ b/back-end/cliente-service/pom.xml
+@@ -52,56 +52,61 @@
+ 		</dependency>
+ 		<dependency>
+ 			<groupId>org.flywaydb</groupId>
+ 			<artifactId>flyway-core</artifactId>
+ 		</dependency>
+ 		<dependency>
+ 			<groupId>org.flywaydb</groupId>
+ 			<artifactId>flyway-database-postgresql</artifactId>
+ 		</dependency>
+ 
+ 		<dependency>
+ 			<groupId>org.postgresql</groupId>
+ 			<artifactId>postgresql</artifactId>
+ 			<scope>runtime</scope>
+ 		</dependency>
+ 		<dependency>
+ 			<groupId>org.projectlombok</groupId>
+ 			<artifactId>lombok</artifactId>
+ 			<optional>true</optional>
+ 		</dependency>
+ 		<dependency>
+ 			<groupId>org.springframework.boot</groupId>
+ 			<artifactId>spring-boot-starter-test</artifactId>
+ 			<scope>test</scope>
+ 		</dependency>
+-		<dependency>
+-			<groupId>org.springframework.security</groupId>
+-			<artifactId>spring-security-test</artifactId>
+-			<scope>test</scope>
+-		</dependency>
+-	</dependencies>
++                <dependency>
++                        <groupId>org.springframework.security</groupId>
++                        <artifactId>spring-security-test</artifactId>
++                        <scope>test</scope>
++                </dependency>
++                <dependency>
++                        <groupId>com.h2database</groupId>
++                        <artifactId>h2</artifactId>
++                        <scope>test</scope>
++                </dependency>
++        </dependencies>
+ 
+ 	<build>
+ 		<plugins>
+ 			<plugin>
+ 				<groupId>org.apache.maven.plugins</groupId>
+ 				<artifactId>maven-compiler-plugin</artifactId>
+ 				<configuration>
+ 					<annotationProcessorPaths>
+ 						<path>
+ 							<groupId>org.projectlombok</groupId>
+ 							<artifactId>lombok</artifactId>
+ 						</path>
+ 					</annotationProcessorPaths>
+ 				</configuration>
+ 			</plugin>
+ 			<plugin>
+ 				<groupId>org.springframework.boot</groupId>
+ 				<artifactId>spring-boot-maven-plugin</artifactId>
+ 				<configuration>
+ 					<excludes>
+ 						<exclude>
+ 							<groupId>org.projectlombok</groupId>
+ 							<artifactId>lombok</artifactId>
+ 						</exclude>
+ 					</excludes>
+diff --git a/back-end/cliente-service/src/main/java/com/example/cliente_service/clientes/ClienteController.java b/back-end/cliente-service/src/main/java/com/example/cliente_service/clientes/ClienteController.java
+index 86e96dc2ebac33fcbb19da321f88762ee0f214bb..370a3e036a2dac45a93a6ace27c1c5497e41d093 100644
+--- a/back-end/cliente-service/src/main/java/com/example/cliente_service/clientes/ClienteController.java
++++ b/back-end/cliente-service/src/main/java/com/example/cliente_service/clientes/ClienteController.java
+@@ -12,65 +12,81 @@ import java.util.List;
+ import java.util.UUID;
+ 
+ @RestController
+ @RequestMapping("/api/clientes")
+ @RequiredArgsConstructor
+ public class ClienteController {
+   private final ClienteRepository repo;
+   private final PasswordEncoder encoder;
+ 
+   @GetMapping
+   public List<ClienteRes> listar() {
+     return repo.findAll().stream().map(ClienteRes::of).toList();
+   }
+ 
+   @GetMapping("/{id}")
+   public ClienteRes ver(@PathVariable UUID id) {
+     return repo
+         .findById(id)
+         .map(ClienteRes::of)
+         .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+   }
+ 
+   @PostMapping
+   @ResponseStatus(HttpStatus.CREATED)
+   public ClienteRes crear(@Valid @RequestBody ClienteReq req) {
+-    var c = Cliente.builder()
+-        .nombre(req.nombre())
+-        .email(req.email())
+-        .telefono(req.telefono())
+-        .clave(encoder.encode(req.clave()))
+-        .build();
++    repo
++        .findByEmail(req.email())
++        .ifPresent(
++            c -> {
++              throw new ResponseStatusException(
++                  HttpStatus.CONFLICT, "El email ya está en uso");
++            });
++    var c =
++        Cliente.builder()
++            .nombre(req.nombre())
++            .email(req.email())
++            .telefono(req.telefono())
++            .clave(encoder.encode(req.clave()))
++            .build();
+     return ClienteRes.of(repo.save(c));
+   }
+ 
+   @PutMapping("/{id}")
+   public ClienteRes actualizar(@PathVariable UUID id, @Valid @RequestBody ClienteReq req) {
+     var c =
+         repo
+             .findById(id)
+             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
++    repo
++        .findByEmail(req.email())
++        .filter(existing -> !existing.getId().equals(id))
++        .ifPresent(
++            existing -> {
++              throw new ResponseStatusException(
++                  HttpStatus.CONFLICT, "El email ya está en uso");
++            });
+     c.setNombre(req.nombre());
+     c.setEmail(req.email());
+     c.setTelefono(req.telefono());
+     c.setClave(encoder.encode(req.clave()));
+     return ClienteRes.of(repo.save(c));
+   }
+ 
+   @DeleteMapping("/{id}")
+   @ResponseStatus(HttpStatus.NO_CONTENT)
+   public void eliminar(@PathVariable UUID id) {
+     if (!repo.existsById(id)) {
+       throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+     }
+     repo.deleteById(id);
+   }
+ 
+   @PostMapping("/login")
+   public ClienteRes login(@Valid @RequestBody LoginReq req) {
+     var c = repo.findByEmail(req.email()).orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED));
+     if (!encoder.matches(req.clave(), c.getClave())) {
+       throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+     }
+     return ClienteRes.of(c);
+   }
+ 
+diff --git a/back-end/cliente-service/src/test/java/com/example/cliente_service/clientes/ClienteControllerIntegrationTest.java b/back-end/cliente-service/src/test/java/com/example/cliente_service/clientes/ClienteControllerIntegrationTest.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..3491d645971a7659bf7f3a4fd579a1b207601355
+--- /dev/null
++++ b/back-end/cliente-service/src/test/java/com/example/cliente_service/clientes/ClienteControllerIntegrationTest.java
+@@ -0,0 +1,56 @@
++package com.example.cliente_service.clientes;
++
++import com.example.cliente_service.clientes.dto.ClienteReq;
++import com.fasterxml.jackson.databind.ObjectMapper;
++import org.junit.jupiter.api.BeforeEach;
++import org.junit.jupiter.api.Test;
++import org.springframework.beans.factory.annotation.Autowired;
++import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
++import org.springframework.boot.test.context.SpringBootTest;
++import org.springframework.http.MediaType;
++import org.springframework.test.web.servlet.MockMvc;
++
++import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
++import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
++import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
++
++@SpringBootTest
++@AutoConfigureMockMvc
++class ClienteControllerIntegrationTest {
++
++  @Autowired MockMvc mvc;
++  @Autowired ObjectMapper mapper;
++  @Autowired ClienteRepository repo;
++
++  @BeforeEach
++  void setUp() {
++    repo.deleteAll();
++  }
++
++  @Test
++  void crearConEmailDuplicadoRetornaConflict() throws Exception {
++    repo.save(Cliente.builder().nombre("A").email("a@a.com").telefono("123").clave("x").build());
++    var req = new ClienteReq("B", "a@a.com", "321", "y");
++    mvc
++        .perform(
++            post("/api/clientes")
++                .contentType(MediaType.APPLICATION_JSON)
++                .content(mapper.writeValueAsString(req)))
++        .andExpect(status().isConflict());
++  }
++
++  @Test
++  void actualizarConEmailDeOtroRetornaConflict() throws Exception {
++    repo.save(Cliente.builder().nombre("A").email("a@a.com").telefono("111").clave("x").build());
++    var otro =
++        repo.save(Cliente.builder().nombre("B").email("b@b.com").telefono("222").clave("y").build());
++    var req = new ClienteReq("B2", "a@a.com", "222", "y");
++    mvc
++        .perform(
++            put("/api/clientes/" + otro.getId())
++                .contentType(MediaType.APPLICATION_JSON)
++                .content(mapper.writeValueAsString(req)))
++        .andExpect(status().isConflict());
++  }
++}
++
+ 
+EOF
+)

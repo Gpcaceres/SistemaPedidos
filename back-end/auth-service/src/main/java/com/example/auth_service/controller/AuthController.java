@@ -1,14 +1,13 @@
 package com.example.auth_service.controller;
 
+import com.example.auth_service.dto.AuthResponse;
 import com.example.auth_service.dto.LoginRequest;
 import com.example.auth_service.dto.RegisterRequest;
-import com.example.auth_service.dto.AuthResponse;
+import com.example.auth_service.user.AppUser;
+import com.example.auth_service.user.AppUserRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -20,27 +19,28 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
 
   private final PasswordEncoder passwordEncoder;
-  private final UserDetailsManager userDetailsManager;
+  private final AppUserRepository userRepository;
   private final AuthenticationManager authenticationManager;
 
   public AuthController(PasswordEncoder passwordEncoder,
-                        UserDetailsManager userDetailsManager,
+                        AppUserRepository userRepository,
                         AuthenticationManager authenticationManager) {
     this.passwordEncoder = passwordEncoder;
-    this.userDetailsManager = userDetailsManager;
+    this.userRepository = userRepository;
     this.authenticationManager = authenticationManager;
   }
 
   @PostMapping("/register")
   public ResponseEntity<AuthResponse> register(@RequestBody RegisterRequest request) {
-    if (userDetailsManager.userExists(request.username())) {
+    if (userRepository.existsByUsername(request.username())) {
       return ResponseEntity.badRequest().body(new AuthResponse("User already exists"));
     }
-    UserDetails user = User.withUsername(request.username())
+    AppUser user = AppUser.builder()
+        .username(request.username())
         .password(passwordEncoder.encode(request.password()))
-        .roles(request.role().toUpperCase())
+        .role(request.role().toUpperCase())
         .build();
-    userDetailsManager.createUser(user);
+    userRepository.save(user);
     return ResponseEntity.ok(new AuthResponse("User registered"));
   }
 

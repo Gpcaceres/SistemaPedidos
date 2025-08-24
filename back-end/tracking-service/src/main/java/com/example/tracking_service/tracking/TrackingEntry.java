@@ -19,5 +19,6 @@ public class TrackingEntry {
   private PedidoEstado estado;
   @NotNull
   private BigDecimal total;
+  @NotNull
   private OffsetDateTime actualizadoEn;
 }

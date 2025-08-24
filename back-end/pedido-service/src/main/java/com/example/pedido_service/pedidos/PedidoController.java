@@ -51,6 +51,7 @@ public class PedidoController {
         .clienteId(saved.getClienteId())
         .estado(saved.getEstado())
         .total(saved.getTotal())
+        .actualizadoEn(saved.getActualizadoEn())
         .build());
     return PedidoRes.of(saved);
   }
@@ -67,6 +68,7 @@ public class PedidoController {
         .clienteId(updated.getClienteId())
         .estado(updated.getEstado())
         .total(updated.getTotal())
+        .actualizadoEn(updated.getActualizadoEn())
         .build());
     return PedidoRes.of(updated);
   }

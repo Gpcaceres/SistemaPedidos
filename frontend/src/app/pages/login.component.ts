@@ -26,7 +26,9 @@ export class LoginComponent {
   login() {
     this.auth.login(this.username, this.password).subscribe({
       next: () => this.router.navigate(['/mis-pedidos']),
-      error: () => (this.error = 'Error de autenticación')
+      error: err => {
+        this.error = err.error?.message || 'Error de autenticación';
+      }
     });
   }
 }

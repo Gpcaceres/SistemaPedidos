@@ -46,10 +46,15 @@ public class AuthController {
       if (userRepository.existsByUsername(request.username())) {
         return ResponseEntity.badRequest().body(new AuthResponse("User already exists", null, null));
       }
+
+    String role = request.role() == null || request.role().isBlank()
+        ? "CLIENTE"
+        : request.role().toUpperCase();
+
     AppUser user = AppUser.builder()
         .username(request.username())
         .password(passwordEncoder.encode(request.password()))
-        .role(request.role().toUpperCase())
+        .role(role)
         .build();
     userRepository.save(user);
     return ResponseEntity.ok(new AuthResponse("User registered", null, null));

@@ -106,7 +106,7 @@ public class SecurityConfig {
     // Permite configurar orígenes por env. Por defecto, sólo Angular dev.
     String allowedCsv = System.getenv().getOrDefault(
       "CORS_ALLOWED_ORIGINS",
-      "http://localhost:4200"
+      "http://localhost:4200,http://localhost:3000"
     );
 
     CorsConfiguration cfg = new CorsConfiguration();

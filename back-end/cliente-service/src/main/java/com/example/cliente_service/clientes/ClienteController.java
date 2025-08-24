@@ -48,6 +48,7 @@ public class ClienteController {
             .email(req.email())
             .telefono(req.telefono())
             .clave(encoder.encode(req.clave()))
+            .tokenRecuperacion(UUID.randomUUID().toString())
             .build();
     return ClienteRes.of(repo.save(c));
   }

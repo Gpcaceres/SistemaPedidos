@@ -51,7 +51,9 @@ export class TrackingComponent {
     if (this.pedido && this.tracking) {
       this.discrepancia =
         this.pedido.estado !== this.tracking.estado ||
-        this.pedido.total !== this.tracking.total;
+        this.pedido.total !== this.tracking.total ||
+        new Date(this.tracking.actualizadoEn).getTime() <
+          new Date(this.pedido.actualizadoEn).getTime();
     }
   }
 }

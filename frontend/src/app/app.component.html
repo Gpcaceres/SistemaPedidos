@@ -1,8 +1,11 @@
-<nav>
-  <a routerLink="/mis-pedidos" *ngIf="auth.isLoggedIn()">Pedidos</a>
-  <a routerLink="/nuevo" *ngIf="auth.isLoggedIn()">Nuevo Pedido</a>
-  <a routerLink="/tracking" *ngIf="auth.isLoggedIn()">Tracking</a>
-  <a routerLink="/login" *ngIf="!auth.isLoggedIn()">Login</a>
-  <a href="#" (click)="logout()" *ngIf="auth.isLoggedIn()">Logout</a>
-</nav>
-<router-outlet></router-outlet>
+<header>
+  <button routerLink="/login">Login</button>
+  <button routerLink="/register">Register</button>
+  <button *ngIf="auth.isLoggedIn()" (click)="logout()">Logout</button>
+</header>
+<main>
+  <router-outlet></router-outlet>
+</main>
+<footer>
+  &copy; 2024 SistemaPedidos
+</footer>

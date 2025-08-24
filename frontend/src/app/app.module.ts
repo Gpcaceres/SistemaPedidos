@@ -7,6 +7,9 @@ import { RouterModule } from '@angular/router';
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { LoginComponent } from './pages/login.component';
+import { CallbackComponent } from './pages/callback.component';
+import { RegisterComponent } from './pages/register.component';
+import { ProductsComponent } from './pages/products.component';
 import { PedidoFormComponent } from './components/pedido-form.component';
 import { PedidoListComponent } from './components/pedido-list.component';
 import { TrackingComponent } from './components/tracking.component';
@@ -16,6 +19,9 @@ import { AuthInterceptor } from './interceptors/auth.interceptor';
   declarations: [
     AppComponent,
     LoginComponent,
+    CallbackComponent,
+    RegisterComponent,
+    ProductsComponent,
     PedidoFormComponent,
     PedidoListComponent,
     TrackingComponent

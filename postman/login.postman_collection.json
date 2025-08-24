@@ -1,0 +1,46 @@
+{
+  "info": {
+    "name": "Auth Login",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Login",
+      "request": {
+        "method": "POST",
+        "header": [
+          {"key": "Content-Type", "value": "application/json"}
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"username\": \"{{username}}\",\n  \"password\": \"{{password}}\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:9000/auth/login",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "9000",
+          "path": ["auth", "login"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status is 200\", function () {",
+              "  pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test(\"Login successful\", function () {",
+              "  const json = pm.response.json();",
+              "  pm.expect(json.message).to.eql(\"Login successful\");",
+              "});"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

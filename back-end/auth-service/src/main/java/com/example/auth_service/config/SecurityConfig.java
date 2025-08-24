@@ -16,8 +16,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
@@ -32,8 +30,6 @@ import org.springframework.security.oauth2.server.authorization.settings.ClientS
 import org.springframework.security.oauth2.server.authorization.settings.TokenSettings;
 import org.springframework.security.oauth2.server.authorization.token.JwtEncodingContext;
 import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenCustomizer;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
-import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -132,21 +128,7 @@ public class SecurityConfig {
     return new InMemoryRegisteredClientRepository(pedidoService, postmanClient, frontClient);
   }
 
-  // --- Usuarios con Roles (demo) ---
-  @Bean
-  UserDetailsManager users(PasswordEncoder encoder) {
-    UserDetails admin = User.withUsername("admin")
-      .password(encoder.encode("admin123"))
-      .roles("ADMIN")
-      .build();
-
-    UserDetails cliente = User.withUsername("cliente")
-      .password(encoder.encode("cliente123"))
-      .roles("CLIENTE")
-      .build();
-
-    return new InMemoryUserDetailsManager(admin, cliente);
-  }
+  // Users will be loaded from the database via JpaUserDetailsService
 
   // --- Password encoder ---
   @Bean

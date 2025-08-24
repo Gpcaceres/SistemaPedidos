@@ -34,7 +34,7 @@ public class ClienteController {
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
   public ClienteRes crear(@Valid @RequestBody ClienteReq req) {
-<<<<<<< ours
+
     repo
         .findByEmail(req.email())
         .ifPresent(
@@ -49,15 +49,6 @@ public class ClienteController {
             .telefono(req.telefono())
             .clave(encoder.encode(req.clave()))
             .build();
-=======
-    var c = Cliente.builder()
-        .nombre(req.nombre())
-        .email(req.email())
-        .telefono(req.telefono())
-        .clave(encoder.encode(req.clave()))
-        .tokenRecuperacion(UUID.randomUUID().toString())
-        .build();
->>>>>>> theirs
     return ClienteRes.of(repo.save(c));
   }
 

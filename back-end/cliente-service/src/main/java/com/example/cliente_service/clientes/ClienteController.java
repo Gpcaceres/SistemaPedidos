@@ -34,6 +34,7 @@ public class ClienteController {
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
   public ClienteRes crear(@Valid @RequestBody ClienteReq req) {
+<<<<<<< ours
     repo
         .findByEmail(req.email())
         .ifPresent(
@@ -48,6 +49,15 @@ public class ClienteController {
             .telefono(req.telefono())
             .clave(encoder.encode(req.clave()))
             .build();
+=======
+    var c = Cliente.builder()
+        .nombre(req.nombre())
+        .email(req.email())
+        .telefono(req.telefono())
+        .clave(encoder.encode(req.clave()))
+        .tokenRecuperacion(UUID.randomUUID().toString())
+        .build();
+>>>>>>> theirs
     return ClienteRes.of(repo.save(c));
   }
 
@@ -93,7 +103,11 @@ public class ClienteController {
   @PostMapping("/recuperar-clave")
   public ClienteRes recuperarClave(@Valid @RequestBody RecuperarClaveReq req) {
     var c = repo.findByEmail(req.email()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+    if (!req.token().equals(c.getTokenRecuperacion())) {
+      throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+    }
     c.setClave(encoder.encode(req.nuevaClave()));
+    c.setTokenRecuperacion(UUID.randomUUID().toString());
     return ClienteRes.of(repo.save(c));
   }
 }

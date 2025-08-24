@@ -7,6 +7,8 @@ export interface Pedido {
   clienteId: string;
   total: number;
   estado: string;
+  creadoEn: string;
+  actualizadoEn: string;
 }
 
 @Injectable({ providedIn: 'root' })

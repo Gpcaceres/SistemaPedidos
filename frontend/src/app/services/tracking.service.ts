@@ -7,6 +7,7 @@ export interface TrackingEntry {
   clienteId: string;
   estado: string;
   total: number;
+  actualizadoEn: string;
 }
 
 @Injectable({ providedIn: 'root' })

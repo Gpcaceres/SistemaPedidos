@@ -1,1 +1,0 @@
-export interface TrackingState { orderId: number | string; status: string; updatedAt?: string; }

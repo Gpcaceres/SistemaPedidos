@@ -1,1 +1,0 @@
-export interface Order { id?: number | string; product: string; clientId: number | string; address: string; status?: string; updatedAt?: string; }

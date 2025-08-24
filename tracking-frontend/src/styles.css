@@ -1,7 +1,0 @@
-:root{ --primary:#2f6feb; --accent:#5cb85c; --warn:#f0ad4e; font-family: system-ui, Arial, sans-serif; }
-body{ margin:0; padding:0 16px; }
-h1,h2{ color: var(--primary); }
-label{ display:flex; flex-direction:column; }
-input,select,button{ padding:8px; border:1px solid #ccc; border-radius:6px; }
-button{ cursor:pointer; }
-.error{ color:#b00020; }

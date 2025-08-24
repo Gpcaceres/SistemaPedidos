@@ -33,6 +33,11 @@ public class Cliente {
   @Column(unique = true, nullable = false, length = 160)
   private String email;
 
+  @NotBlank
+  @Size(max = 80)
+  @Column(nullable = false, length = 80)
+  private String clave;
+
   @Size(max = 40)
   @Column(length = 40)
   private String telefono;

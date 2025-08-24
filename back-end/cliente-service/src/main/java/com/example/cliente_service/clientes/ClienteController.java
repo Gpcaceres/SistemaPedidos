@@ -4,6 +4,7 @@ import com.example.cliente_service.clientes.dto.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import jakarta.validation.Valid;
 import java.util.List;
@@ -14,6 +15,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class ClienteController {
   private final ClienteRepository repo;
+  private final PasswordEncoder encoder;
 
   @GetMapping
   public List<ClienteRes> listar() {
@@ -32,6 +34,7 @@ public class ClienteController {
         .nombre(req.nombre())
         .email(req.email())
         .telefono(req.telefono())
+        .clave(encoder.encode(req.clave()))
         .build();
     return ClienteRes.of(repo.save(c));
   }
@@ -42,6 +45,7 @@ public class ClienteController {
     c.setNombre(req.nombre());
     c.setEmail(req.email());
     c.setTelefono(req.telefono());
+    c.setClave(encoder.encode(req.clave()));
     return ClienteRes.of(repo.save(c));
   }
 

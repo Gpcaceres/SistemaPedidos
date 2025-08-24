@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.*;
 import org.hibernate.annotations.UuidGenerator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.time.OffsetDateTime;
 import java.util.UUID;
@@ -36,6 +37,7 @@ public class Cliente {
   @NotBlank
   @Size(max = 80)
   @Column(nullable = false, length = 80)
+  @JsonIgnore
   private String clave;
 
   @Size(max = 40)

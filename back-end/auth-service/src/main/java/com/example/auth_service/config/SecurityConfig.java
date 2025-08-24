@@ -9,14 +9,15 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
@@ -32,6 +33,7 @@ import org.springframework.security.oauth2.server.authorization.settings.TokenSe
 import org.springframework.security.oauth2.server.authorization.token.JwtEncodingContext;
 import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenCustomizer;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -65,7 +67,7 @@ public class SecurityConfig {
       .csrf(AbstractHttpConfigurer::disable)
       .cors(Customizer.withDefaults())
       .authorizeHttpRequests(auth -> auth
-        .requestMatchers("/actuator/**").permitAll()
+        .requestMatchers("/actuator/**", "/auth/register", "/auth/login").permitAll()
         .anyRequest().authenticated())
       .formLogin(Customizer.withDefaults());
     return http.build();
@@ -132,7 +134,7 @@ public class SecurityConfig {
 
   // --- Usuarios con Roles (demo) ---
   @Bean
-  UserDetailsService users(PasswordEncoder encoder) {
+  UserDetailsManager users(PasswordEncoder encoder) {
     UserDetails admin = User.withUsername("admin")
       .password(encoder.encode("admin123"))
       .roles("ADMIN")
@@ -150,6 +152,12 @@ public class SecurityConfig {
   @Bean
   PasswordEncoder passwordEncoder() {
     return PasswordEncoderFactories.createDelegatingPasswordEncoder();
+  }
+
+  // --- Authentication manager ---
+  @Bean
+  AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
+    return configuration.getAuthenticationManager();
   }
 
   // --- Customizer: incluir claim "roles" en access token e id token ---

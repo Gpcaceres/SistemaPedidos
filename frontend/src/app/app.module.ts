@@ -12,6 +12,7 @@ import { ProductsComponent } from './pages/products.component';
 import { PedidoFormComponent } from './components/pedido-form.component';
 import { PedidoListComponent } from './components/pedido-list.component';
 import { TrackingComponent } from './components/tracking.component';
+import { OperatorDashboardComponent } from './components/operator-dashboard/operator-dashboard.component';
 import { AuthInterceptor } from './interceptors/auth.interceptor';
 
 @NgModule({
@@ -22,7 +23,8 @@ import { AuthInterceptor } from './interceptors/auth.interceptor';
     ProductsComponent,
     PedidoFormComponent,
     PedidoListComponent,
-    TrackingComponent
+    TrackingComponent,
+    OperatorDashboardComponent
   ],
   imports: [
     BrowserModule,

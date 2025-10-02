@@ -6,6 +6,7 @@ import { ProductsComponent } from './pages/products.component';
 import { PedidoFormComponent } from './components/pedido-form.component';
 import { PedidoListComponent } from './components/pedido-list.component';
 import { TrackingComponent } from './components/tracking.component';
+import { OperatorDashboardComponent } from './components/operator-dashboard/operator-dashboard.component';
 import { AuthGuard } from './guards/auth.guard';
 import { RoleGuard } from './guards/role.guard';
 
@@ -29,6 +30,12 @@ const routes: Routes = [
     component: TrackingComponent,
     canActivate: [AuthGuard, RoleGuard],
     data: { role: 'CLIENTE' }
+  },
+  {
+    path: 'operador/ordenes',
+    component: OperatorDashboardComponent,
+    canActivate: [AuthGuard, RoleGuard],
+    data: { role: 'OPERADOR' }
   },
   { path: '', component: ProductsComponent }
 ];

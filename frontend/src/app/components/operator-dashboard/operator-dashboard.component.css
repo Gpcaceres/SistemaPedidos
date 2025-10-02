@@ -1,0 +1,325 @@
+:host {
+  display: block;
+  background: linear-gradient(180deg, #f7e4e4 0%, #ffffff 120%);
+  min-height: 100vh;
+  padding: 1.5rem 2rem 3rem;
+  box-sizing: border-box;
+}
+
+.operator-dashboard {
+  display: grid;
+  grid-template-columns: minmax(210px, 260px) minmax(0, 1fr);
+  gap: 2.5rem;
+  align-items: start;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.operator-menu {
+  background: rgba(255, 255, 255, 0.92);
+  border-radius: 16px;
+  box-shadow: 0 16px 40px rgba(127, 17, 17, 0.08);
+  padding: 1.75rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.operator-menu h2 {
+  margin: 0;
+  font-size: 1.25rem;
+  color: #861414;
+}
+
+.operator-menu p {
+  margin: 0;
+  color: #5f3a3a;
+  font-size: 0.9rem;
+}
+
+.operator-menu nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.menu-button {
+  width: 100%;
+  border: none;
+  border-radius: 999px;
+  padding: 0.75rem 1.25rem;
+  font-weight: 600;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(186, 33, 46, 0.12);
+  color: #7a1420;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.menu-button.active,
+.menu-button:hover {
+  background: #ba212e;
+  color: #fff;
+}
+
+.operator-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.content-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1.5rem;
+}
+
+.content-header h1 {
+  margin: 0;
+  font-size: 1.75rem;
+  color: #5c131a;
+}
+
+.content-header p {
+  margin: 0.25rem 0 0;
+  color: #7c5158;
+}
+
+.session-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.75rem;
+  color: #5c131a;
+  font-weight: 600;
+}
+
+.orders-card,
+.order-edit {
+  background: rgba(255, 255, 255, 0.96);
+  border-radius: 18px;
+  box-shadow: 0 18px 45px rgba(124, 33, 42, 0.12);
+  padding: 1.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.orders-card header,
+.order-edit header {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 1.5rem;
+}
+
+.orders-card header h2,
+.order-edit header h2 {
+  margin: 0;
+  font-size: 1.35rem;
+  color: #6d1a22;
+}
+
+.status-selector {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.status-selector label {
+  font-weight: 600;
+  color: #5c131a;
+}
+
+.status-selector select {
+  min-width: 160px;
+  border-radius: 999px;
+  border: 1px solid rgba(122, 20, 32, 0.25);
+  padding: 0.5rem 1rem;
+  background: #fff;
+  color: #5c131a;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+thead {
+  text-align: left;
+  color: #7c5158;
+  font-size: 0.85rem;
+}
+
+thead th {
+  font-weight: 600;
+  padding-bottom: 0.75rem;
+}
+
+tbody td {
+  padding: 0.65rem 0;
+  border-top: 1px solid rgba(122, 20, 32, 0.12);
+  color: #44282b;
+}
+
+td.actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.primary,
+.secondary {
+  border-radius: 999px;
+  padding: 0.55rem 1.5rem;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.primary {
+  background: #ba212e;
+  color: #fff;
+}
+
+.primary:hover {
+  box-shadow: 0 8px 18px rgba(186, 33, 46, 0.25);
+}
+
+.secondary {
+  background: rgba(186, 33, 46, 0.12);
+  color: #7a1420;
+}
+
+.secondary:hover {
+  background: rgba(186, 33, 46, 0.2);
+}
+
+.tasks-table {
+  display: flex;
+  flex-direction: column;
+  border-radius: 14px;
+  border: 1px solid rgba(122, 20, 32, 0.12);
+  overflow: hidden;
+}
+
+.tasks-row {
+  display: grid;
+  grid-template-columns: 2fr repeat(4, minmax(90px, 1fr)) minmax(100px, 1fr);
+  gap: 0.5rem;
+  padding: 0.85rem 1rem;
+  background: rgba(255, 255, 255, 0.9);
+}
+
+.tasks-header {
+  background: rgba(186, 33, 46, 0.1);
+  font-weight: 600;
+  color: #5c131a;
+}
+
+.add-task-form {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(140px, 1fr));
+  gap: 1.25rem;
+  align-items: end;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.field label,
+.order-date-field label {
+  font-weight: 600;
+  color: #5c131a;
+}
+
+.field input,
+.order-date-field input {
+  border-radius: 12px;
+  border: 1px solid rgba(122, 20, 32, 0.25);
+  padding: 0.6rem 0.85rem;
+  font-size: 0.95rem;
+  background: #fff;
+  color: #44282b;
+}
+
+.order-dates {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  grid-column: span 3;
+}
+
+.order-date-field {
+  min-width: 180px;
+  flex: 1 1 200px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.add-task-form .actions {
+  grid-column: span 3;
+  display: flex;
+  justify-content: flex-end;
+}
+
+@media (max-width: 1024px) {
+  .operator-dashboard {
+    grid-template-columns: minmax(200px, 240px) minmax(0, 1fr);
+    gap: 1.75rem;
+  }
+
+  .add-task-form {
+    grid-template-columns: repeat(2, minmax(140px, 1fr));
+  }
+
+  .order-dates,
+  .add-task-form .actions {
+    grid-column: span 2;
+  }
+}
+
+@media (max-width: 768px) {
+  :host {
+    padding: 1rem;
+  }
+
+  .operator-dashboard {
+    grid-template-columns: 1fr;
+  }
+
+  .operator-menu {
+    flex-direction: column;
+  }
+
+  .content-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .session-actions {
+    align-items: flex-start;
+  }
+
+  .tasks-row {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .add-task-form {
+    grid-template-columns: 1fr;
+  }
+
+  .order-dates,
+  .add-task-form .actions {
+    grid-column: span 1;
+  }
+}

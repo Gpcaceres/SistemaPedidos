@@ -1,0 +1,178 @@
+<div class="operator-dashboard">
+  <aside class="operator-menu">
+    <h2>Menú del operador</h2>
+    <p>Seleccione una sección para trabajar.</p>
+    <nav>
+      <button
+        type="button"
+        class="menu-button"
+        [class.active]="activeTab === 'ordenes-activas'"
+        (click)="setActive('ordenes-activas')"
+      >
+        Órdenes activas
+      </button>
+      <button
+        type="button"
+        class="menu-button"
+        [class.active]="activeTab === 'nueva-orden'"
+        (click)="setActive('nueva-orden')"
+      >
+        Crear nueva
+      </button>
+      <button
+        type="button"
+        class="menu-button"
+        [class.active]="activeTab === 'consultar-ordenes'"
+        (click)="setActive('consultar-ordenes')"
+      >
+        Consultar órdenes
+      </button>
+      <button
+        type="button"
+        class="menu-button"
+        [class.active]="activeTab === 'detalle-orden'"
+        (click)="setActive('detalle-orden')"
+      >
+        Detalle de orden
+      </button>
+      <button
+        type="button"
+        class="menu-button"
+        [class.active]="activeTab === 'editar-orden'"
+        (click)="setActive('editar-orden')"
+      >
+        Editar orden
+      </button>
+    </nav>
+  </aside>
+
+  <section class="operator-content">
+    <header class="content-header">
+      <div>
+        <h1>Gestión de órdenes</h1>
+        <p>Crea, consulta y actualiza órdenes de trabajo de forma ágil.</p>
+      </div>
+      <div class="session-actions">
+        <span>Rol: Operador</span>
+        <button type="button" class="secondary">Cerrar sesión</button>
+      </div>
+    </header>
+
+    <article class="orders-card">
+      <header>
+        <div>
+          <h2>Órdenes en curso</h2>
+          <p>Listado automático de órdenes que aún no están finalizadas.</p>
+        </div>
+        <div class="status-selector">
+          <label for="estadoOrden">Estado de la orden</label>
+          <select id="estadoOrden">
+            <option>Abierta</option>
+            <option>En progreso</option>
+            <option>Cerrada</option>
+          </select>
+          <button type="button" class="secondary">Actualizar estado</button>
+        </div>
+      </header>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Número</th>
+            <th>Cliente</th>
+            <th>Vehículo</th>
+            <th>Técnico</th>
+            <th>Inicio</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>000012</td>
+            <td>Luis Chicaza</td>
+            <td>fasdf</td>
+            <td>Abierta</td>
+            <td>15/07/2024</td>
+            <td class="actions">
+              <button type="button" class="primary">Ver</button>
+              <button type="button" class="secondary">PDF</button>
+            </td>
+          </tr>
+          <tr>
+            <td>000022</td>
+            <td>Luis Chicaza</td>
+            <td>fasdf</td>
+            <td>Elia Camporta</td>
+            <td>15/07/2024</td>
+            <td class="actions">
+              <button type="button" class="primary">Editar</button>
+              <button type="button" class="secondary">PDF</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </article>
+
+    <article class="order-edit" *ngIf="activeTab === 'editar-orden'">
+      <header>
+        <h2>Tareas de la orden</h2>
+        <button type="button" class="secondary">Actualizar estado</button>
+      </header>
+
+      <div class="tasks-table">
+        <div class="tasks-row tasks-header">
+          <span>Descripción</span>
+          <span>Horas</span>
+          <span>Tarifa</span>
+          <span>Subtotal</span>
+          <span>Inicio</span>
+          <span>Fin</span>
+        </div>
+        <div class="tasks-row">
+          <span>Mantenimiento</span>
+          <span>1.00</span>
+          <span>0.00</span>
+          <span>0.00</span>
+          <span>15/07/2024</span>
+          <span>15/07/2024</span>
+        </div>
+        <div class="tasks-row">
+          <span>Diagnóstico</span>
+          <span>1.00</span>
+          <span>0.00</span>
+          <span>0.00</span>
+          <span>15/07/2024</span>
+          <span>15/07/2024</span>
+        </div>
+      </div>
+
+      <form class="add-task-form">
+        <div class="field">
+          <label for="descripcion">Descripción</label>
+          <input id="descripcion" type="text" placeholder="Ej. Diagnóstico del motor" />
+        </div>
+        <div class="field">
+          <label for="horas">Horas</label>
+          <input id="horas" type="number" min="0" step="0.25" />
+        </div>
+        <div class="field">
+          <label for="tarifa">Tarifa por hora</label>
+          <input id="tarifa" type="number" min="0" step="0.25" />
+        </div>
+        <div class="order-dates">
+          <div class="order-date-field">
+            <label for="inicio">Inicio</label>
+            <input id="inicio" type="date" />
+          </div>
+          <div class="order-date-field">
+            <label for="fin">Fin</label>
+            <input id="fin" type="date" />
+          </div>
+        </div>
+        <div class="actions">
+          <button type="submit" class="primary">Agregar tarea</button>
+        </div>
+      </form>
+    </article>
+  </section>
+</div>
